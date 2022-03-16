@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -17,10 +18,12 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 public class Dialogo extends JDialog {
+	
 	private JTextField txtUsuario;
 	private JPasswordField txtPassword;
 	private JTextField txtBaseDatos;
 	private JTextField txtTabla;
+	private Ventana ventana;
 	
 	public Dialogo() {
 		super();
@@ -42,7 +45,11 @@ public class Dialogo extends JDialog {
 			public void keyPressed(KeyEvent e) {
 				super.keyReleased(e);
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					aceptar();
+					try {
+						aceptar();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
@@ -57,7 +64,11 @@ public class Dialogo extends JDialog {
 			public void keyReleased(KeyEvent e) {
 				super.keyReleased(e);
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					aceptar();
+					try {
+						aceptar();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
@@ -71,7 +82,11 @@ public class Dialogo extends JDialog {
 			public void keyReleased(KeyEvent e) {
 				super.keyReleased(e);
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					aceptar();
+					try {
+						aceptar();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
@@ -85,7 +100,11 @@ public class Dialogo extends JDialog {
 			public void keyReleased(KeyEvent e) {
 				super.keyReleased(e);
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					aceptar();
+					try {
+						aceptar();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
@@ -97,7 +116,11 @@ public class Dialogo extends JDialog {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				aceptar();				
+				try {
+					aceptar();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}				
 			}
 		});
 		panel.add(bAceptar);
@@ -115,15 +138,14 @@ public class Dialogo extends JDialog {
 	}
 	
 	private void cancelar() {
-		/*if (ventana == null) {
+		if (ventana == null) {
 			System.exit(0);
 		}
 		ventana.setVisible(true);
-		setVisible(false);*/
-		System.exit(0);
+		setVisible(false);
 	}
 	
-	private void aceptar() {
+	private void aceptar() throws SQLException {
 		String usuario;
 		String password;
 		String baseDatos;
@@ -162,7 +184,7 @@ public class Dialogo extends JDialog {
 			return;
 		}
 		
-		Ventana ventana = new Ventana(this, usuario, password, baseDatos, tabla);
+		ventana = new Ventana(this, usuario, password, baseDatos, tabla);
 		ventana.setVisible(true);
 		this.setVisible(false);
 	}
