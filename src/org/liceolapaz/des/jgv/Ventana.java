@@ -7,9 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -65,6 +68,7 @@ public class Ventana extends JFrame{
         tabla.clearSelection();
 		
 	}
+	
 	private void refrescarTabla() throws SQLException {
 		PreparedStatement ps = conexion.prepareStatement("SELECT * FROM empleados");
 		ResultSet rs = ps.executeQuery();
@@ -73,6 +77,43 @@ public class Ventana extends JFrame{
 		modelo.fireTableDataChanged();
 		tabla.repaint();
 	}
+	
+	private void guardarDatos() throws SQLException {
+		List<Empleado> empleados = new ArrayList<Empleado>();
+		for (int i = 0; modelo.getRowCount() > i; i++) {
+			Empleado empleado = new Empleado();
+            empleado.setDni(modelo.getValueAt(i, 0).toString());
+            empleado.setNombre(modelo.getValueAt(i, 1).toString());
+            empleado.setApe1(modelo.getValueAt(i, 2).toString());
+            empleado.setApe2(modelo.getValueAt(i, 3).toString());
+            empleado.setFechaNac(Date.valueOf(modelo.getValueAt(i, 4).toString()));
+            empleado.setSalario(Double.parseDouble(modelo.getValueAt(i, 5).toString()));
+            empleado.setDepart(Integer.parseInt(modelo.getValueAt(i, 6).toString()));
+            empleado.setDniJefe(modelo.getValueAt(i, 7).toString());
+            empleados.add(empleado);
+		}
+        empleados.forEach(e->{
+        	System.out.println(e.getNombre());
+        });
+	    String limpiarTabla = "TRUNCATE TABLE empleados;";
+	    PreparedStatement ps = conexion.prepareStatement(limpiarTabla);
+	    ps.executeUpdate();
+	    String cargarDatos = "INSERT INTO empleados(dni,nombre,prim_ape,seg_ape,fec_nac,salario,depart,dni_jefe) "
+	    		+ "VALUES ('";
+        empleados.forEach(e->{
+        	try {
+				PreparedStatement pst =conexion.prepareStatement(cargarDatos+
+						e.getDni()+"','"+e.getNombre()+"','"+e.getApe1()+"','"+
+						e.getApe2()+"','"+e.getFechaNac()+"','"+e.getSalario()+"','"+
+						e.getDepart()+"','"+e.getDniJefe()+"');");
+				pst.executeUpdate();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+        });
+        refrescarTabla();
+	}
+	
 	private void crearBotones() {
 		JPanel botones = new JPanel();
 		botones.setLayout(new GridLayout(1,4,30,30));
@@ -119,7 +160,11 @@ public class Ventana extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//Actualizar
+				try {
+					guardarDatos();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		//bActualizar.setSize(50,20);
