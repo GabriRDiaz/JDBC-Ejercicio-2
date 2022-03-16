@@ -39,7 +39,7 @@ public class Dialogo extends JDialog {
 		JLabel lbUsuario = new JLabel("Usuario");
 		panel.add(lbUsuario);
 		
-		txtUsuario = new JTextField("root");
+		txtUsuario = new JTextField("db");
 		txtUsuario.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
