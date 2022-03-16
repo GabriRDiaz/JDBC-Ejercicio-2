@@ -51,7 +51,7 @@ public class Dialogo extends JDialog {
 		
 		JLabel lbPassword = new JLabel("Contraseña");
 		panel.add(lbPassword);
-		txtPassword = new JPasswordField();
+		txtPassword = new JPasswordField("1234");
 		txtPassword.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -65,7 +65,7 @@ public class Dialogo extends JDialog {
 		
 		JLabel lbBaseDatos = new JLabel("Base datos");
 		panel.add(lbBaseDatos);
-		txtBaseDatos = new JTextField();
+		txtBaseDatos = new JTextField("prog");
 		txtBaseDatos.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -79,7 +79,7 @@ public class Dialogo extends JDialog {
 		
 		JLabel lbTabla = new JLabel("Tabla");
 		panel.add(lbTabla);
-		txtTabla = new JTextField();
+		txtTabla = new JTextField("empleados");
 		txtTabla.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -120,23 +120,50 @@ public class Dialogo extends JDialog {
 		}
 		ventana.setVisible(true);
 		setVisible(false);*/
+		System.exit(0);
 	}
 	
 	private void aceptar() {
 		String usuario;
 		String password;
+		String baseDatos;
+		String tabla;
+		
 		usuario = txtUsuario.getText();
+		password = txtPassword.getText();
+		baseDatos = txtBaseDatos.getText();
+		tabla = txtTabla.getText();
+		
+
 		if (usuario.equals("")) {
 			JOptionPane.showMessageDialog(this, "Introduzca el usuario", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		password = new String(txtPassword.getPassword());
-		if (password.equals("a")) {
+
+		if (password.equals("")) {
 			JOptionPane.showMessageDialog(this, "Introduzca la contraseña", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		//ventana = new Ventana(this, usuario, password);
-		//ventana.setVisible(true);
-		setVisible(false);
+		
+		if (baseDatos.equals("")) {
+			JOptionPane.showMessageDialog(this, "Introduzca la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if (tabla.equals("")) {
+			JOptionPane.showMessageDialog(this, "Introduzca la tabla", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if(baseDatos.equals("prog") && tabla.equals("empleados")) {
+			System.out.println("ok");
+		}else {
+			JOptionPane.showMessageDialog(this, "La base de datos o la tabla no son correctas", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		Ventana ventana = new Ventana(this, usuario, password, baseDatos, tabla);
+		ventana.setVisible(true);
+		this.setVisible(false);
 	}
 }
