@@ -1,7 +1,6 @@
 package org.liceolapaz.des.jgv;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,20 +13,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
 public class Ventana extends JFrame{
 	private Dialogo dialogo;
@@ -82,14 +78,54 @@ public class Ventana extends JFrame{
 		List<Empleado> empleados = new ArrayList<Empleado>();
 		for (int i = 0; modelo.getRowCount() > i; i++) {
 			Empleado empleado = new Empleado();
-            empleado.setDni(modelo.getValueAt(i, 0).toString());
-            empleado.setNombre(modelo.getValueAt(i, 1).toString());
-            empleado.setApe1(modelo.getValueAt(i, 2).toString());
-            empleado.setApe2(modelo.getValueAt(i, 3).toString());
-            empleado.setFechaNac(Date.valueOf(modelo.getValueAt(i, 4).toString()));
-            empleado.setSalario(Double.parseDouble(modelo.getValueAt(i, 5).toString()));
-            empleado.setDepart(Integer.parseInt(modelo.getValueAt(i, 6).toString()));
-            empleado.setDniJefe(modelo.getValueAt(i, 7).toString());
+			if(modelo.getValueAt(i, 0).toString()==null) {
+				empleado.setDni("-");
+			}else {
+				empleado.setDni(modelo.getValueAt(i, 0).toString());
+			}
+			
+			if(modelo.getValueAt(i, 1).toString()==null) {
+				empleado.setNombre("-");
+			}else {
+				empleado.setNombre(modelo.getValueAt(i, 1).toString());
+			}
+            
+			if(modelo.getValueAt(i, 2).toString()==null) {
+				empleado.setApe1("-");
+			}else {
+				empleado.setApe1(modelo.getValueAt(i, 2).toString());
+			}
+			
+			if(modelo.getValueAt(i, 3).toString()==null) {
+				empleado.setApe2("-");
+			}else {
+				empleado.setApe2(modelo.getValueAt(i, 3).toString());
+			}
+			
+			if(modelo.getValueAt(i, 4).toString()==null) {
+				empleado.setFechaNac(Date.valueOf("0000-00-00"));
+			}else {
+				empleado.setFechaNac(Date.valueOf(modelo.getValueAt(i, 4).toString()));
+			}
+            
+			if(modelo.getValueAt(i, 5).toString()==null) {
+				empleado.setSalario(0.0);
+			}else {
+				empleado.setSalario(Double.parseDouble(modelo.getValueAt(i, 5).toString()));
+			}
+            
+			if(modelo.getValueAt(i, 6).toString()==null) {
+				empleado.setDepart(-1);
+			}else {
+				empleado.setDepart(Integer.parseInt(modelo.getValueAt(i, 6).toString()));
+			}
+			
+			if(modelo.getValueAt(i, 7).toString()==null) {
+				empleado.setDniJefe("-");
+			}else {
+				empleado.setDniJefe(modelo.getValueAt(i, 7).toString());
+			}
+			
             empleados.add(empleado);
 		}
         empleados.forEach(e->{
@@ -146,7 +182,13 @@ public class Ventana extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					refrescarTabla();
+					if (JOptionPane.showConfirmDialog(null, "Se perderán los datos no guardados. ¿Continuar?", "Aviso",
+					        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						refrescarTabla();
+					} else {
+					   return;
+					}
+					
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
@@ -161,7 +203,12 @@ public class Ventana extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					guardarDatos();
+					if (JOptionPane.showConfirmDialog(null, "Se guardarán los datos. ¿Continuar?", "Aviso",
+					        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						guardarDatos();
+					} else {
+					   return;
+					}
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
