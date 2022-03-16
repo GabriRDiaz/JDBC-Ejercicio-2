@@ -21,6 +21,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -28,6 +29,9 @@ import javax.swing.table.TableColumnModel;
 public class Ventana extends JFrame{
 	private Dialogo dialogo;
 	private Connection conexion;
+	private JTable tabla;
+	private Modelo modelo;
+	private JScrollPane panelTabla;
 	public Ventana(Dialogo dialogo, String usuario, String password, String baseDatos, String tabla) throws SQLException {
 		
 		this.dialogo=dialogo;
@@ -44,6 +48,31 @@ public class Ventana extends JFrame{
 		crearBotones();
 		
 	}
+	
+	private void insertarFila() {
+		DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+		modelo.addRow(new Object[]{});
+	}
+	
+	private void eliminarFila() {
+		DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+		int[] filas = tabla.getSelectedRows();
+		
+		for (int fila : filas) {
+			modelo.removeRow(tabla.convertRowIndexToModel(fila));
+		}
+		
+        tabla.clearSelection();
+		
+	}
+	private void refrescarTabla() throws SQLException {
+		PreparedStatement ps = conexion.prepareStatement("SELECT * FROM empleados");
+		ResultSet rs = ps.executeQuery();
+		
+		modelo.refrescarModelo(rs);
+		modelo.fireTableDataChanged();
+		tabla.repaint();
+	}
 	private void crearBotones() {
 		JPanel botones = new JPanel();
 		botones.setLayout(new GridLayout(1,4,30,30));
@@ -52,8 +81,9 @@ public class Ventana extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//Insertar
+				insertarFila();
 			}
+
 		});
 
 		botones.add(bInsertar);
@@ -63,7 +93,7 @@ public class Ventana extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//Eliminar
+				eliminarFila();
 			}
 		});
 
@@ -74,7 +104,11 @@ public class Ventana extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//Refrescar
+				try {
+					refrescarTabla();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 
@@ -97,12 +131,14 @@ public class Ventana extends JFrame{
 	private void crearTabla() throws SQLException {
 		PreparedStatement ps = conexion.prepareStatement("SELECT * FROM empleados");
 		ResultSet rs = ps.executeQuery();
-		Modelo modelo = new Modelo(rs);
+		modelo = new Modelo(rs);
 
-		JTable tabla = new JTable(modelo);
+		tabla = new JTable(modelo);
 		tabla.setFillsViewportHeight(true);
-		JScrollPane scrollPane = new JScrollPane(tabla);
-		this.add(scrollPane, BorderLayout.CENTER);
+
+		panelTabla = new JScrollPane(tabla);
+		this.add(panelTabla, BorderLayout.CENTER);
+		
 	}
 	private void crearMenu() {
 		JMenuBar menuBar = new JMenuBar();
